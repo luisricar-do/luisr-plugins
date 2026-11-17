@@ -1,5 +1,5 @@
 {
-  "name": "luisr-pluguins",
+  "name": "claude-plugins",
   "private": true,
   "type": "module",
   "scripts": {

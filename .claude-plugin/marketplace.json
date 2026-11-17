@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "luisr-pluguins",
+  "name": "luisr-plugins",
   "description": "Plugins pessoais de Claude Code do Luis Ricardo. Hoje: spec antes do código, da descoberta com protótipo ao build com subagentes e gates.",
   "owner": {
     "name": "Luis Ricardo"
