@@ -1,0 +1,9 @@
+{
+  "name": "luisr-pluguins",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "zip:claude-ai": "node scripts/zip-skills.mjs"
+  }
+}

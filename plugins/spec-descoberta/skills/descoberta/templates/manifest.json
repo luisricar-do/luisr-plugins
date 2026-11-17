@@ -1,0 +1,19 @@
+{
+  "contrato": "1.1",
+  "produto": "",
+  "slug": "",
+  "versao": "0.1.0",
+  "status": "rascunho",
+  "atualizado_em": "",
+  "autor": "",
+  "contagens": {
+    "jornadas": 0,
+    "funcionalidades": 0,
+    "mvp": 0,
+    "telas": 0,
+    "perguntas_abertas": 0,
+    "iteracoes": 0,
+    "aprendizados": 0
+  },
+  "ambiente_de_origem": ""
+}

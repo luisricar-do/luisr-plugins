@@ -1,0 +1,27 @@
+# syntax=docker/dockerfile:1
+# Multi-stage: only dist + production deps reach the runtime image, running as the non-root node user.
+# The scaffold replaces <node-exact> with the current exact Node 24 alpine tag, ideally with its digest
+# (node:24.x.y-alpine@sha256:...). A floating tag rebuilds into a different runtime without notice.
+ARG NODE_IMAGE=node:<node-exact>-alpine
+
+FROM ${NODE_IMAGE} AS deps
+WORKDIR /repo
+RUN corepack enable
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+RUN pnpm fetch
+
+FROM deps AS build
+COPY . .
+RUN pnpm install --frozen-lockfile --offline \
+ && pnpm --filter ./apps/api... build \
+ && pnpm --filter ./apps/api deploy --prod --legacy /out
+# --legacy: pnpm 10 refuses "deploy" on non-injected workspaces (ERR_PNPM_DEPLOY_NONINJECTED_WORKSPACE).
+
+FROM ${NODE_IMAGE} AS runtime
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=build --chown=node:node /out ./
+USER node
+EXPOSE 3001
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1:3001/ready || exit 1
+CMD ["node", "dist/server.js"]

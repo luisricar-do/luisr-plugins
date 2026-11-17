@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "luisr-pluguins",
+  "description": "Plugins pessoais de Claude Code do Luis Ricardo. Hoje: spec antes do código, da descoberta com protótipo ao build com subagentes e gates.",
+  "owner": {
+    "name": "Luis Ricardo"
+  },
+  "plugins": [
+    {
+      "name": "spec-descoberta",
+      "source": "./plugins/spec-descoberta",
+      "description": "Entrevista, protótipo navegável iterado em versões, aprendizados compilados e pacote spec/ (ou ZIP) antes de qualquer código.",
+      "version": "0.2.0",
+      "category": "productivity"
+    },
+    {
+      "name": "spec-build",
+      "source": "./plugins/spec-build",
+      "description": "Pré-avaliação técnica (Gate 0), scaffold no padrão do método e build fatia a fatia com subagentes e gates de qualidade e segurança.",
+      "version": "0.2.0",
+      "category": "development"
+    }
+  ]
+}

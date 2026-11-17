@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protótipo — Produto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Cole aqui o design/tokens.json aprovado. O script abaixo vira cada chave em variável CSS:
+     cor.primaria -> --cor-primaria ; todo grupo "<nome>-escuro" substitui "<nome>" no tema escuro. -->
+<script id="tokens" type="application/json">
+{
+  "cor": { "primaria": "#2F5BEA", "primaria-contraste": "#FFFFFF", "primaria-texto": "#2F5BEA", "fundo": "#FFFFFF", "superficie": "#F5F7FB", "borda": "#E2E6EF", "borda-campo": "#7B8599", "texto": "#141A2A", "texto-suave": "#5B6478", "sucesso": "#15803D", "alerta": "#B45309", "erro": "#DC2626" },
+  "cor-escuro": { "primaria": "#7C9BFF", "primaria-contraste": "#0B1020", "primaria-texto": "#7C9BFF", "fundo": "#0B1020", "superficie": "#141B2E", "borda": "#26304A", "borda-campo": "#62709A", "texto": "#E8ECF6", "texto-suave": "#9AA4BC", "sucesso": "#4ADE80", "alerta": "#FBBF24", "erro": "#F87171" },
+  "fonte": { "titulo": "'Inter', system-ui, sans-serif", "corpo": "'Inter', system-ui, sans-serif", "mono": "ui-monospace, monospace" },
+  "tamanho": { "xs": "12px", "sm": "14px", "md": "16px", "lg": "20px", "xl": "28px", "2xl": "40px" },
+  "espaco": { "1": "4px", "2": "8px", "3": "12px", "4": "16px", "6": "24px", "8": "32px", "12": "48px" },
+  "raio": { "sm": "6px", "md": "10px", "lg": "16px", "pill": "999px" },
+  "sombra": { "sm": "0 1px 2px rgb(0 0 0 / .06)", "md": "0 4px 16px rgb(0 0 0 / .08)" },
+  "sombra-escuro": { "sm": "0 1px 2px rgb(0 0 0 / .4)", "md": "0 4px 16px rgb(0 0 0 / .5)" }
+}
+</script>
+<script>
+  (function () {
+    const t = JSON.parse(document.getElementById('tokens').textContent);
+    const css = (grupo, prefixo) => Object.entries(grupo || {}).map(([k, v]) => `--${prefixo}-${k}:${v};`).join('');
+    let base = '', escuro = '';
+    for (const [g, vals] of Object.entries(t)) {
+      if (g.endsWith('-escuro')) escuro += css(vals, g.slice(0, -'-escuro'.length));
+      else base += css(vals, g);
+    }
+    const s = document.createElement('style');
+    s.textContent = `:root{${base}}` +
+      (escuro ? `@media (prefers-color-scheme: dark){:root:not([data-tema="claro"]){${escuro}}} :root[data-tema="escuro"]{${escuro}}` : '');
+    document.head.appendChild(s);
+  })();
+</script>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{margin:0}
+  body{background:var(--cor-fundo);color:var(--cor-texto);font-family:var(--fonte-corpo);font-size:var(--tamanho-md);line-height:1.5}
+  h1,h2,h3{font-family:var(--fonte-titulo);line-height:1.2;margin:0 0 var(--espaco-3)}
+  h1{font-size:var(--tamanho-xl)} h2{font-size:var(--tamanho-lg)} h3{font-size:var(--tamanho-md)}
+  p{margin:0 0 var(--espaco-3)}
+  a{color:var(--cor-primaria-texto)}
+  :focus-visible{outline:3px solid var(--cor-primaria-texto);outline-offset:2px}
+  .suave{color:var(--cor-texto-suave);font-size:var(--tamanho-sm)}
+
+  /* Layout do app: topo + conteúdo. Troque por barra lateral se o produto for painel. */
+  .app-topo{display:flex;align-items:center;gap:var(--espaco-4);padding:var(--espaco-3) var(--espaco-6);border-bottom:1px solid var(--cor-borda);background:var(--cor-fundo);position:sticky;top:0;z-index:5}
+  .app-topo .marca{font-weight:700;font-family:var(--fonte-titulo)}
+  .app-topo nav{display:flex;gap:var(--espaco-4);margin-left:auto}
+  .app-topo nav a{color:var(--cor-texto-suave);text-decoration:none}
+  .app-topo nav a[aria-current]{color:var(--cor-texto);font-weight:600}
+  /* Menu inferior: só aparece no celular. */
+  .app-abas{display:none}
+  body[data-casca-ativa="cliente"] .app-topo nav,body[data-casca-ativa="cliente"] .app-abas{display:none !important}
+  main{max-width:1120px;margin:0 auto;padding:var(--espaco-8) var(--espaco-6) 120px}
+
+  /* Telas: só a do hash aparece */
+  .tela{display:none} .tela.ativa{display:block}
+
+  /* Componentes */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--espaco-2);min-height:44px;padding:0 var(--espaco-4);border-radius:var(--raio-md);border:1px solid transparent;font:600 var(--tamanho-sm) var(--fonte-corpo);cursor:pointer;text-decoration:none}
+  .btn-primario{background:var(--cor-primaria);color:var(--cor-primaria-contraste)}
+  .btn-secundario{background:transparent;color:var(--cor-texto);border-color:var(--cor-borda)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .card{background:var(--cor-superficie);border:1px solid var(--cor-borda);border-radius:var(--raio-lg);padding:var(--espaco-6);box-shadow:var(--sombra-sm)}
+  .grade{display:grid;gap:var(--espaco-4);grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .campo{display:flex;flex-direction:column;gap:var(--espaco-1);margin-bottom:var(--espaco-4)}
+  .campo label{font-weight:600;font-size:var(--tamanho-sm)}
+  .campo input,.campo select,.campo textarea{min-height:44px;padding:var(--espaco-2) var(--espaco-3);border:1px solid var(--cor-borda-campo);border-radius:var(--raio-sm);background:var(--cor-fundo);color:var(--cor-texto);font:inherit}
+  .campo .erro{color:var(--cor-erro);font-size:var(--tamanho-sm)}
+  .campo.com-erro input{border-color:var(--cor-erro)}
+  table{width:100%;border-collapse:collapse;font-size:var(--tamanho-sm)}
+  th,td{text-align:left;padding:var(--espaco-3);border-bottom:1px solid var(--cor-borda)}
+  th{color:var(--cor-texto-suave);font-weight:600}
+  .selo{display:inline-block;padding:2px var(--espaco-2);border-radius:var(--raio-pill);font-size:var(--tamanho-xs);font-weight:600;background:var(--cor-superficie);border:1px solid var(--cor-borda)}
+  .selo.ok{color:var(--cor-sucesso)} .selo.aviso{color:var(--cor-alerta)} .selo.falha{color:var(--cor-erro)}
+  .vazio{text-align:center;padding:var(--espaco-12) var(--espaco-6);color:var(--cor-texto-suave)}
+  .aviso-caixa{padding:var(--espaco-3) var(--espaco-4);border-radius:var(--raio-md);border:1px solid var(--cor-borda);background:var(--cor-superficie)}
+  .aviso-caixa.erro{border-color:var(--cor-erro)} .aviso-caixa.sucesso{border-color:var(--cor-sucesso)}
+  .linha{display:flex;gap:var(--espaco-3);align-items:center;flex-wrap:wrap}
+  .entre{justify-content:space-between}
+
+  /* Barra do protótipo: não faz parte do produto */
+  .proto-barra{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:#111827;color:#F9FAFB;font:500 13px system-ui,sans-serif;box-shadow:0 8px 24px rgb(0 0 0 / .25);z-index:50;max-width:calc(100vw - 32px)}
+  .proto-barra select,.proto-barra button{font:inherit;color:inherit;background:#1F2937;border:1px solid #374151;border-radius:999px;padding:4px 10px;min-height:32px}
+  .proto-barra .versao{opacity:.7;white-space:nowrap}
+
+  @media (max-width:640px){
+    main{padding:var(--espaco-6) var(--espaco-4) 120px}
+    .app-topo{padding:var(--espaco-3) var(--espaco-4)}
+    .app-topo nav{display:none}
+    .app-abas{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--cor-fundo);border-top:1px solid var(--cor-borda)}
+    .app-abas a{flex:1;min-height:56px;display:flex;align-items:center;justify-content:center;color:var(--cor-texto-suave);text-decoration:none;font-size:var(--tamanho-sm)}
+    .app-abas a[aria-current]{color:var(--cor-primaria-texto);font-weight:600}
+    .proto-barra{bottom:72px}
+    table{display:block;overflow-x:auto}
+  }
+</style>
+</head>
+<body>
+<header class="app-topo">
+  <span class="marca">Produto</span>
+  <!-- Cada link: href = primeira tela da seção; data-secao = prefixos das telas que acendem o link. -->
+  <nav aria-label="Principal">
+    <a href="#T-01" data-secao="T-01">Início</a>
+    <a href="#T-02" data-secao="T-02 T-03">Pedidos</a>
+  </nav>
+</header>
+<nav class="app-abas" aria-label="Principal (celular)">
+  <a href="#T-01" data-secao="T-01">Início</a>
+  <a href="#T-02" data-secao="T-02 T-03">Pedidos</a>
+</nav>
+
+<main>
+  <!-- Uma section por tela e uma por estado (T-NN-<estado>). data-nome aparece na barra do protótipo.
+       data-casca="cliente" esconde o menu do painel (telas do cliente final); padrão é "painel". -->
+  <section class="tela" id="T-01" data-nome="Início">
+    <h1>Bom dia, Ana</h1>
+    <p class="suave">Resumo do dia · 17 de novembro</p>
+    <div class="grade">
+      <div class="card"><p class="suave">Pedidos hoje</p><h2>24</h2></div>
+      <div class="card"><p class="suave">A receber</p><h2>R$ 3.480,00</h2></div>
+      <div class="card"><p class="suave">Atrasados</p><h2>2 <span class="selo falha">atenção</span></h2></div>
+    </div>
+    <p style="margin-top:24px"><a class="btn btn-primario" href="#T-02">Ver pedidos</a></p>
+  </section>
+
+  <section class="tela" id="T-02" data-nome="Lista de pedidos">
+    <div class="linha entre"><h1>Pedidos</h1><a class="btn btn-primario" href="#T-03">Novo pedido</a></div>
+    <table>
+      <thead><tr><th>Nº</th><th>Cliente</th><th>Valor</th><th>Situação</th></tr></thead>
+      <tbody>
+        <tr><td>1042</td><td>Mercearia Bom Preço</td><td>R$ 320,00</td><td><span class="selo ok">pago</span></td></tr>
+        <tr><td>1041</td><td>Padaria Trigo Fino</td><td>R$ 185,50</td><td><span class="selo aviso">pendente</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="tela" id="T-02-vazio" data-nome="Lista de pedidos (vazia)">
+    <h1>Pedidos</h1>
+    <div class="vazio card"><h2>Nenhum pedido ainda</h2><p>Quando você registrar o primeiro pedido, ele aparece aqui.</p><a class="btn btn-primario" href="#T-03">Registrar pedido</a></div>
+  </section>
+
+  <section class="tela" id="T-03" data-nome="Novo pedido">
+    <h1>Novo pedido</h1>
+    <form class="card" style="max-width:520px" onsubmit="location.hash='#T-03-sucesso';return false">
+      <div class="campo"><label for="cli">Cliente</label><input id="cli" value="Mercearia Bom Preço"></div>
+      <div class="campo com-erro"><label for="val">Valor</label><input id="val" inputmode="decimal" aria-describedby="val-erro"><span class="erro" id="val-erro">Informe o valor do pedido.</span></div>
+      <div class="linha"><button class="btn btn-primario">Salvar pedido</button><a class="btn btn-secundario" href="#T-02">Cancelar</a></div>
+    </form>
+  </section>
+
+  <section class="tela" id="T-03-sucesso" data-nome="Novo pedido (salvo)">
+    <div class="aviso-caixa sucesso" role="status">Pedido 1043 salvo.</div>
+    <p style="margin-top:16px"><a class="btn btn-secundario" href="#T-02">Voltar para pedidos</a></p>
+  </section>
+</main>
+
+<div class="proto-barra" role="toolbar" aria-label="Controles do protótipo">
+  <label for="proto-tela" class="versao">Tela</label>
+  <select id="proto-tela"></select>
+  <button id="proto-tema" type="button">Tema: auto</button>
+  <span class="versao">v0.1.0</span>
+</div>
+
+<script>
+  (function () {
+    const telas = [...document.querySelectorAll('.tela')];
+    const sel = document.getElementById('proto-tela');
+    telas.forEach(t => sel.add(new Option(`${t.id} · ${t.dataset.nome || ''}`, t.id)));
+    function mostrar() {
+      const id = (location.hash || '#' + telas[0].id).slice(1);
+      const alvo = document.getElementById(id) && document.getElementById(id).classList.contains('tela') ? id : telas[0].id;
+      telas.forEach(t => t.classList.toggle('ativa', t.id === alvo));
+      sel.value = alvo;
+      const telaBase = alvo.split('-').slice(0, 2).join('-');
+      document.querySelectorAll('[data-secao]').forEach(a => a.toggleAttribute('aria-current', a.dataset.secao.split(' ').includes(telaBase)));
+      document.body.dataset.cascaAtiva = document.getElementById(alvo).dataset.casca || 'painel';
+      window.scrollTo(0, 0);
+    }
+    sel.addEventListener('change', () => { location.hash = sel.value; });
+    window.addEventListener('hashchange', mostrar);
+    mostrar();
+    const temas = ['auto', 'claro', 'escuro'];
+    let i = 0;
+    const btn = document.getElementById('proto-tema');
+    btn.addEventListener('click', () => {
+      i = (i + 1) % temas.length;
+      if (temas[i] === 'auto') document.documentElement.removeAttribute('data-tema');
+      else document.documentElement.setAttribute('data-tema', temas[i]);
+      btn.textContent = 'Tema: ' + temas[i];
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Glossário
+
+| Termo | Significa |
+|---|---|

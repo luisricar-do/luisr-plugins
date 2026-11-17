@@ -1,0 +1,20 @@
+{
+  "name": "spec-build",
+  "displayName": "Spec — Build com gates",
+  "version": "0.2.0",
+  "description": "Do pacote de spec aprovado ao código: pré-avaliação técnica que gera a spec técnica, scaffold no padrão do método e construção fatia a fatia com subagentes (arquiteto, backend, frontend, testes, segurança e revisão) passando por gates de qualidade e segurança.",
+  "author": {
+    "name": "Luis Ricardo"
+  },
+  "license": "MIT",
+  "keywords": [
+    "spec",
+    "sdd",
+    "build",
+    "subagentes",
+    "gates",
+    "seguranca",
+    "arquitetura",
+    "typescript"
+  ]
+}

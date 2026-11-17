@@ -1,0 +1,19 @@
+{
+  "name": "spec-descoberta",
+  "displayName": "Spec — Descoberta do produto",
+  "version": "0.2.0",
+  "description": "Transforma a ideia de um software em um pacote de spec antes de qualquer código: entrevista guiada, protótipo navegável que itera em versões com a pessoa até ela dizer que chegou, aprendizados compilados das iterações e a pasta spec/ (ou ZIP) pronta para a pré-avaliação técnica.",
+  "author": {
+    "name": "Luis Ricardo"
+  },
+  "license": "MIT",
+  "keywords": [
+    "spec",
+    "descoberta",
+    "entrevista",
+    "prototipo",
+    "design-system",
+    "mvp",
+    "produto"
+  ]
+}
