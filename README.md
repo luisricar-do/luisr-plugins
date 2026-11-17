@@ -1,7 +1,6 @@
-# claude-plugins
+# luisr-plugins
 
-Marketplace pessoal de plugins de Claude Code (nome do marketplace: `luisr-plugins`; o Claude Code
-reserva `claude-plugins` para os oficiais). Hoje tem dois plugins para construir software com
+Marketplace pessoal de plugins de Claude Code. Hoje tem dois plugins para construir software com
 **spec antes do código**:
 
 ```
@@ -24,7 +23,7 @@ O que passa de um para o outro é a pasta `spec/`, definida em [`docs/contrato-s
 ## Instalar (Claude Code)
 
 ```bash
-claude plugin marketplace add luisricar-do/claude-plugins
+claude plugin marketplace add luisricar-do/luisr-plugins
 ```
 
 ```bash
@@ -36,7 +35,7 @@ claude plugin install spec-build@luisr-plugins
 ```
 
 O repo é privado: a máquina precisa do `gh` logado na conta `luisricar-do`. Para desenvolver os
-plugins localmente, use o caminho da pasta no lugar de `luisricar-do/claude-plugins`.
+plugins localmente, use o caminho da pasta no lugar de `luisricar-do/luisr-plugins`.
 
 ## Usar no claude.ai (só o Plugin 1)
 
